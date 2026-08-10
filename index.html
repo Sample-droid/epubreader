@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EPUB Reader</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Required libraries for parsing and rendering EPUBs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="top-bar">
+        <h1 id="book-title">Library</h1>
+        <label for="file-input" class="upload-btn">
+            Open EPUB
+        </label>
+        <input type="file" id="file-input" accept=".epub" />
+    </header>
+
+    <!-- Reader Area (Infinite Scroll) -->
+    <main id="viewer" class="viewer-container">
+        <div id="placeholder-text">
+            <h2>Welcome to your Web Reader</h2>
+            <p>Tap "Open EPUB" above to load a novel.</p>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation Bar (Chapter Info & Quick Jumps) -->
+    <footer class="bottom-bar">
+        <button id="prev-btn" disabled>&larr; Prev</button>
+        <div id="chapter-title">Chapter...</div>
+        <button id="next-btn" disabled>Next &rarr;</button>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

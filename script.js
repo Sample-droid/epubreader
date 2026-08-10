@@ -1,0 +1,90 @@
+const fileInput = document.getElementById('file-input');
+const viewer = document.getElementById('viewer');
+const bookTitle = document.getElementById('book-title');
+const chapterTitle = document.getElementById('chapter-title');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+
+let book = null;
+let rendition = null;
+
+// Handle File Selection
+fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Clean up if a book is already open
+    if (book) {
+        book.destroy();
+    }
+    
+    // Clear placeholder text
+    viewer.innerHTML = '';
+
+    const reader = new FileReader();
+    
+    // Read the file as an ArrayBuffer (Required for local EPUBs)
+    reader.onload = function(event) {
+        const bookData = event.target.result;
+        
+        // Initialize ePub
+        book = ePub(bookData);
+        
+        // Render settings for Infinite Scrolling & Mobile
+        rendition = book.renderTo("viewer", {
+            manager: "continuous",
+            flow: "scrolled-doc", // Enables infinite vertical scrolling
+            width: "100%",
+            height: "100%",
+            snap: false
+        });
+
+        // Apply a clean reading style to the EPUB contents
+        rendition.themes.default({
+            p: {
+                "font-size": "1.1rem !important",
+                "line-height": "1.6 !important",
+                "padding-bottom": "1em !important"
+            },
+            body: {
+                "padding": "0 10px !important"
+            }
+        });
+
+        rendition.display();
+
+        // Retrieve and display Book Title
+        book.loaded.metadata.then(meta => {
+            bookTitle.textContent = meta.title || "Unknown Title";
+        });
+
+        // Listen for scroll/location changes to update the Chapter Heading
+        rendition.on("relocated", function(location) {
+            
+            // Check if we are at the start or end to disable buttons
+            prevBtn.disabled = location.atStart;
+            nextBtn.disabled = location.atEnd;
+
+            // Update chapter title based on current Table of Contents location
+            book.loaded.navigation.then(nav => {
+                const navItem = nav.get(location.start.href);
+                if (navItem && navItem.label) {
+                    chapterTitle.textContent = navItem.label.trim();
+                } else {
+                    chapterTitle.textContent = "Reading...";
+                }
+            });
+        });
+    };
+    
+    reader.readAsArrayBuffer(file);
+});
+
+// Setup Next/Prev buttons to jump chapters (helpful in infinite scroll mode)
+prevBtn.addEventListener('click', () => {
+    if (rendition) rendition.prev();
+});
+
+nextBtn.addEventListener('click', () => {
+    if (rendition) rendition.next();
+});
