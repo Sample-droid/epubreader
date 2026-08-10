@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lumina ePub Reader</title>
     
-    <!-- Google Fonts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -16,108 +16,97 @@
     
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-theme="dark">
 
-    <!-- Mobile Backdrop Overlay -->
-    <div id="backdrop" class="backdrop hidden"></div>
+    <!-- Mobile Backdrop -->
+    <div id="backdrop" class="backdrop"></div>
 
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar collapsed" id="sidebar">
-            <div class="brand">
-                <div class="brand-icon">📖</div>
-                <span>LUMINA READER</span>
+    <div class="app-layout">
+        <!-- Sidebar Drawer -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">📖 <span>LUMINA</span></div>
+                <button id="closeSidebarBtn" class="icon-btn mobile-only">✕</button>
             </div>
 
-            <div class="book-info">
-                <h2 id="bookTitle">No Book Loaded</h2>
-                <p id="bookAuthor">Upload an .epub file to start reading</p>
+            <div class="book-details">
+                <h3 id="bookTitle">No Book Loaded</h3>
+                <p id="bookAuthor">Select an EPUB file to begin</p>
             </div>
 
-            <!-- Tab Navigation -->
-            <div class="tab-controls">
+            <nav class="sidebar-tabs">
                 <button class="tab-btn active" data-tab="toc">Contents</button>
                 <button class="tab-btn" data-tab="settings">Settings</button>
-            </div>
+            </nav>
 
-            <!-- Tab 1: Table of Contents -->
-            <div class="tab-content active" id="tab-toc">
-                <div class="toc-list" id="tocList">
-                    <p class="empty-state-text">Chapters will appear here after loading a book.</p>
-                </div>
-            </div>
-
-            <!-- Tab 2: Reader Settings -->
-            <div class="tab-content" id="tab-settings">
-                <div class="control-group">
-                    <span class="group-label">Theme</span>
-                    <div class="theme-grid">
-                        <button class="theme-btn active" data-theme="dark" style="background:#121215; color:#f4f4f5;">Dark</button>
-                        <button class="theme-btn" data-theme="sepia" style="background:#fbf0d9; color:#5f4b32;">Sepia</button>
-                        <button class="theme-btn" data-theme="light" style="background:#ffffff; color:#09090b;">Light</button>
+            <div class="sidebar-body">
+                <!-- TOC Tab -->
+                <div id="tab-toc" class="tab-pane active">
+                    <div id="tocList" class="toc-list">
+                        <p class="placeholder-text">Chapters will appear here.</p>
                     </div>
                 </div>
 
-                <div class="control-group">
-                    <span class="group-label">Font Size</span>
-                    <div class="font-size-controls">
-                        <button class="icon-btn" id="decFont">-</button>
-                        <span id="fontSizeDisplay">100%</span>
-                        <button class="icon-btn" id="incFont">+</button>
+                <!-- Settings Tab -->
+                <div id="tab-settings" class="tab-pane">
+                    <div class="setting-group">
+                        <label>Theme</label>
+                        <div class="theme-buttons">
+                            <button class="theme-btn active" data-theme="dark">Dark</button>
+                            <button class="theme-btn" data-theme="sepia">Sepia</button>
+                            <button class="theme-btn" data-theme="light">Light</button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="control-group">
-                    <span class="group-label">Font Family</span>
-                    <select id="fontFamilySelect" class="select-input">
-                        <option value="Plus Jakarta Sans">Sans-Serif</option>
-                        <option value="Georgia">Serif</option>
-                        <option value="Courier New">Monospace</option>
-                    </select>
+                    <div class="setting-group">
+                        <label>Font Size</label>
+                        <div class="font-controls">
+                            <button id="decFontBtn" class="font-btn">-</button>
+                            <span id="fontSizeVal">100%</span>
+                            <button id="incFontBtn" class="font-btn">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Viewport -->
-        <main class="viewport">
-            <header class="top-bar">
-                <button class="icon-btn" id="toggleSidebar" aria-label="Toggle Menu">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-nav">
+                <button id="menuBtn" class="icon-btn" aria-label="Open Menu">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="3" y1="12" x2="21" y2="12"></line>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <line x1="3" y1="18" x2="21" y2="18"></line>
                     </svg>
                 </button>
 
-                <div class="actions">
-                    <label for="epubFileInput" class="primary-btn">
-                        <span>Open EPUB</span>
-                        <input type="file" id="epubFileInput" accept=".epub">
-                    </label>
-                </div>
+                <label class="upload-btn">
+                    <span>Open EPUB</span>
+                    <input type="file" id="fileInput" accept=".epub">
+                </label>
             </header>
 
-            <!-- Stage Area -->
-            <div class="reader-stage" id="readerStage">
-                <div class="drop-zone" id="dropZone">
-                    <div class="drop-icon">📚</div>
-                    <h3>Select or Drop an EPUB File</h3>
-                    <p>Supported format: .epub</p>
+            <div class="stage-area">
+                <!-- Drop Zone / Empty State -->
+                <div id="emptyState" class="empty-state">
+                    <div class="upload-icon">📚</div>
+                    <h2>Choose an EPUB File</h2>
+                    <p>Tap "Open EPUB" above or drop a file here</p>
                 </div>
 
-                <!-- EPUB Viewer -->
-                <div id="viewer" class="epub-viewer hidden"></div>
+                <!-- Reader Viewer -->
+                <div id="viewer" class="viewer hidden"></div>
 
-                <!-- Nav Controls -->
-                <button class="nav-arrow left hidden" id="prevPage" aria-label="Previous Page">‹</button>
-                <button class="nav-arrow right hidden" id="nextPage" aria-label="Next Page">›</button>
+                <!-- Prev/Next Page Buttons -->
+                <button id="prevBtn" class="nav-btn prev hidden" aria-label="Previous Page">‹</button>
+                <button id="nextBtn" class="nav-btn next hidden" aria-label="Next Page">›</button>
             </div>
 
-            <!-- Footer Progress -->
-            <footer class="reader-footer">
-                <span id="progressPercent">0%</span>
-                <div class="progress-bar-track">
-                    <div class="progress-bar-fill" id="progressBarFill"></div>
+            <footer class="bottom-bar">
+                <span id="progressText">0%</span>
+                <div class="progress-track">
+                    <div id="progressBar" class="progress-fill"></div>
                 </div>
             </footer>
         </main>
