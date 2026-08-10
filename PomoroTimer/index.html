@@ -3,114 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lumina ePub Reader</title>
+    <title>Mobile ePub Reader</title>
     
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Dependencies -->
+    <!-- JSZip for extracting EPUB ZIP archives -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js"></script>
-    
+
     <link rel="stylesheet" href="style.css">
 </head>
-<body data-theme="dark">
+<body>
 
-    <!-- Mobile Backdrop -->
-    <div id="backdrop" class="backdrop"></div>
+    <!-- Slide-out Chapter Drawer Overlay -->
+    <div id="drawerBackdrop" class="drawer-backdrop"></div>
+    
+    <aside id="tocDrawer" class="toc-drawer">
+        <div class="drawer-header">
+            <h3>Chapters</h3>
+            <button id="closeDrawerBtn" class="close-btn">✕</button>
+        </div>
+        <div id="tocList" class="toc-list">
+            <p class="empty-msg">No chapters loaded.</p>
+        </div>
+    </aside>
 
-    <div class="app-layout">
-        <!-- Sidebar Drawer -->
-        <aside id="sidebar" class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">📖 <span>LUMINA</span></div>
-                <button id="closeSidebarBtn" class="icon-btn mobile-only">✕</button>
-            </div>
+    <!-- Top Action Bar -->
+    <header class="top-bar">
+        <button id="openDrawerBtn" class="bar-btn" aria-label="Open Table of Contents">
+            ☰
+        </button>
+        <span id="bookTitle" class="title-text">Mobile ePub Reader</span>
+        <label class="upload-btn">
+            Open
+            <input type="file" id="epubInput" accept=".epub">
+        </label>
+    </header>
 
-            <div class="book-details">
-                <h3 id="bookTitle">No Book Loaded</h3>
-                <p id="bookAuthor">Select an EPUB file to begin</p>
-            </div>
+    <!-- Main Infinite Scroll Area -->
+    <main id="scrollContainer" class="scroll-container">
+        <!-- Empty Landing State -->
+        <div id="emptyState" class="empty-state">
+            <div class="icon">📖</div>
+            <h2>Tap "Open" to Load an ePub</h2>
+            <p>Renders continuous vertical scrolling optimized for mobile.</p>
+        </div>
 
-            <nav class="sidebar-tabs">
-                <button class="tab-btn active" data-tab="toc">Contents</button>
-                <button class="tab-btn" data-tab="settings">Settings</button>
-            </nav>
-
-            <div class="sidebar-body">
-                <!-- TOC Tab -->
-                <div id="tab-toc" class="tab-pane active">
-                    <div id="tocList" class="toc-list">
-                        <p class="placeholder-text">Chapters will appear here.</p>
-                    </div>
-                </div>
-
-                <!-- Settings Tab -->
-                <div id="tab-settings" class="tab-pane">
-                    <div class="setting-group">
-                        <label>Theme</label>
-                        <div class="theme-buttons">
-                            <button class="theme-btn active" data-theme="dark">Dark</button>
-                            <button class="theme-btn" data-theme="sepia">Sepia</button>
-                            <button class="theme-btn" data-theme="light">Light</button>
-                        </div>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Font Size</label>
-                        <div class="font-controls">
-                            <button id="decFontBtn" class="font-btn">-</button>
-                            <span id="fontSizeVal">100%</span>
-                            <button id="incFontBtn" class="font-btn">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <header class="top-nav">
-                <button id="menuBtn" class="icon-btn" aria-label="Open Menu">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
-                </button>
-
-                <label class="upload-btn">
-                    <span>Open EPUB</span>
-                    <input type="file" id="fileInput" accept=".epub">
-                </label>
-            </header>
-
-            <div class="stage-area">
-                <!-- Drop Zone / Empty State -->
-                <div id="emptyState" class="empty-state">
-                    <div class="upload-icon">📚</div>
-                    <h2>Choose an EPUB File</h2>
-                    <p>Tap "Open EPUB" above or drop a file here</p>
-                </div>
-
-                <!-- Reader Viewer -->
-                <div id="viewer" class="viewer hidden"></div>
-
-                <!-- Prev/Next Page Buttons -->
-                <button id="prevBtn" class="nav-btn prev hidden" aria-label="Previous Page">‹</button>
-                <button id="nextBtn" class="nav-btn next hidden" aria-label="Next Page">›</button>
-            </div>
-
-            <footer class="bottom-bar">
-                <span id="progressText">0%</span>
-                <div class="progress-track">
-                    <div id="progressBar" class="progress-fill"></div>
-                </div>
-            </footer>
-        </main>
-    </div>
+        <!-- Rendered Chapters Container -->
+        <div id="bookContent" class="book-content hidden"></div>
+    </main>
 
     <script src="script.js"></script>
 </body>
