@@ -18,6 +18,36 @@
     --reader-text: #e4e4e7;
 }
 
+/* Sepia Theme */
+[data-app-theme="sepia"] {
+    --bg-main: #f4ebd0;
+    --bg-surface: #fbf0d9;
+    --bg-surface-hover: #f0e3c4;
+    --bg-element: #e6d7b8;
+    --border-subtle: rgba(95, 75, 50, 0.12);
+    --text-primary: #42321e;
+    --text-secondary: #6e5941;
+    --text-muted: #947e65;
+    --accent: #c07d31;
+    --reader-bg: #fbf0d9;
+    --reader-text: #42321e;
+}
+
+/* Light Theme */
+[data-app-theme="light"] {
+    --bg-main: #f4f4f5;
+    --bg-surface: #ffffff;
+    --bg-surface-hover: #f4f4f5;
+    --bg-element: #e4e4e7;
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --text-primary: #09090b;
+    --text-secondary: #71717a;
+    --text-muted: #a1a1aa;
+    --accent: #0284c7;
+    --reader-bg: #ffffff;
+    --reader-text: #09090b;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -40,7 +70,17 @@ body {
     position: relative;
 }
 
-/* Glass Sidebar */
+/* Backdrop for Mobile Sidebar */
+.backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    transition: opacity 0.25s ease;
+}
+
+/* Sidebar */
 .sidebar {
     width: 320px;
     background-color: var(--bg-surface);
@@ -49,8 +89,8 @@ body {
     flex-direction: column;
     padding: 20px;
     gap: 16px;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), margin-left 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 20;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 100;
 }
 
 .sidebar.collapsed {
@@ -73,7 +113,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #000;
+    font-size: 16px;
 }
 
 .brand span {
@@ -170,7 +210,7 @@ body {
     margin-top: 20px;
 }
 
-/* Controls & Settings */
+/* Settings Controls */
 .control-group {
     display: flex;
     flex-direction: column;
@@ -299,14 +339,7 @@ body {
 }
 
 .drop-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background-color: var(--bg-surface);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent);
+    font-size: 32px;
 }
 
 .drop-zone h3 { font-size: 15px; color: var(--text-primary); }
@@ -336,6 +369,7 @@ body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.15s ease;
+    font-size: 24px;
     z-index: 5;
 }
 
@@ -375,40 +409,30 @@ body {
    MOBILE RESPONSIVE OVERRIDES (< 768px)
 ---------------------------------------------------- */
 @media (max-width: 768px) {
-    /* Convert Sidebar into an Overlay Drawer */
     .sidebar {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
-        height: 100%;
-        width: 85%;
+        height: 100vh;
+        width: 80%;
         max-width: 300px;
         box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
+        margin-left: 0 !important;
+        transform: translateX(0); /* Opened */
     }
 
     .sidebar.collapsed {
-        transform: translateX(-100%);
-        margin-left: 0; /* Clear negative margin fallback */
+        transform: translateX(-100%) !important; /* Fully hidden off-screen */
     }
 
-    /* Floating navigation buttons shrink slightly and move to bottom corner */
     .nav-arrow {
         width: 38px;
         height: 38px;
         top: auto;
-        bottom: 20px;
+        bottom: 16px;
         transform: none;
     }
 
     .nav-arrow.left { left: 16px; }
     .nav-arrow.right { right: 16px; }
-
-    /* Touch-friendly target sizing */
-    .icon-btn, .primary-btn, .theme-btn {
-        min-height: 40px;
-    }
-
-    .top-bar {
-        padding: 0 12px;
-    }
 }
